@@ -57,9 +57,43 @@ module ``about the stock example`` =
     // Feel free to add extra [<Koan>] members here to write
     // tests for yourself along the way. You can also try 
     // using the F# Interactive window to check your progress.
+    
+    let calculateVariance openPrice closePrice =
+            let openPriceVal = System.Double.Parse(openPrice)
+            let closePriceVal = System.Double.Parse(closePrice)
+            System.Math.Abs(openPriceVal - closePriceVal)
+
+    [<Koan>]
+    let TestCalculateVariance() = 
+        let result = calculateVariance "31.89" "31.74"
+        AssertEquality true (System.Math.Abs(result - 0.15) < 0.001)
+
+        let result = calculateVariance "31.74" "31.89"
+        AssertEquality true (System.Math.Abs(result - 0.15) < 0.001)
+        
+    let splitCommas (x:string) =
+        x.Split([|','|])
+
+    let getDateAndVariance (row:string) =
+        let array = splitCommas row
+        let variance = calculateVariance array.[1] array.[4];
+        
+        (array.[0], variance)
+
+    [<Koan>]
+    let TestGetDateAndVariance() =
+        let input = "2012-03-08,32.04,32.21,31.90,32.01,36747400,32.01"
+        let result = input |> getDateAndVariance
+
+        AssertEquality "2012-03-08" (fst result)
+        AssertEquality true (System.Math.Abs(snd result - 0.03) < 0.001)
 
     [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
-        
+        let result = stockData 
+                        |> List.tail 
+                        |> List.map getDateAndVariance 
+                        |> List.maxBy (fun (_, variance) -> variance)
+                        |> fst
+
         AssertEquality "2012-03-13" result
