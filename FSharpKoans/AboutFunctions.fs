@@ -16,7 +16,7 @@ module ``about functions`` =
        and the body of a function is denoted
        by indentation. *)
 
-    let add (x:'T) (y:'T) =
+    let add x y =
         x + y
 
     [<Koan>]
